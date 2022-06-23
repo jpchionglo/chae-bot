@@ -1,0 +1,11 @@
+{
+  "name": "chae-bot",
+  "version": "1.0.0",
+  "description": "finally i found amongus",
+  "main": "bot.js",
+  "author": "tiramisu",
+  "dependencies": {
+    "discord.io": "^2.5.3",
+    "winston": "^3.7.2"
+  }
+}
