@@ -37,9 +37,9 @@ export const addbalance: Command = {
         });
         targetUser = await Users.findOne({ where: { userId: targetUserId } });
         await interaction.reply(
-          `Added ${diamonds} \`\`💎\`\` to <@${targetUserId}>. Their current balance: ${targetUser.get(
+          `Added **${diamonds}** \`\`💎\`\` to <@${targetUserId}>. Their current balance: **${targetUser.get(
             "balance"
-          )} \`\`💎\`\` `
+          )}** \`\`💎\`\` `
         );
       } else {
         await interaction.reply("User does not have a balance yet.");

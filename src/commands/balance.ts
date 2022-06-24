@@ -14,7 +14,7 @@ export const balance: Command = {
     });
 
     if (user) {
-      await interaction.reply(`${user.get("balance")} \`\`💎\`\` `);
+      await interaction.reply(`You have **${user.get("balance")}** \`\`💎\`\``);
     } else {
       await interaction.reply("User not registered.");
     }

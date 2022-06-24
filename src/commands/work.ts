@@ -11,24 +11,27 @@ export const work: Command = {
     const work = await Work.findOne({
       where: { userid: interaction.user.id },
     });
-    let currentMinutes = new Date(interaction.createdAt).getUTCMinutes();
+    let currentDate = new Date(interaction.createdAt);
 
     try {
-      if (work && minutesSinceWork(currentMinutes, work.get("lastWork")) < 20) {
+      if (
+        work &&
+        minutesSinceWork(currentDate, new Date(work.get("lastWork"))) < 20
+      ) {
         await interaction.reply(
           `Too tired. You can work again in ${
-            20 - minutesSinceWork(currentMinutes, work.get("lastWork"))
+            20 - minutesSinceWork(currentDate, new Date(work.get("lastWork")))
           } minutes.`
         );
       } else {
         if (!work) {
           await Work.create({
             userId: interaction.user.id,
-            lastWork: currentMinutes,
+            lastWork: String(currentDate),
           });
         } else {
           await Work.update(
-            { lastWork: currentMinutes },
+            { lastWork: String(currentDate) },
             { where: { userId: interaction.user.id } }
           );
         }
@@ -42,26 +45,19 @@ export const work: Command = {
         });
 
         await interaction.reply(
-          `Worked to add 10 \`\`💎\`\` to <@${
+          `Worked to add **10** \`\`💎\`\` to <@${
             interaction.user.id
-          }>. Current balance: ${targetUser.get("balance")} \`\`💎\`\` `
+          }>. Current balance: **${targetUser.get("balance")}** \`\`💎\`\` `
         );
       }
     } catch (error) {
       console.log(error);
-      await interaction.reply("An error occured adding a balance (daily).");
+      await interaction.reply("An error occured adding a balance (work).");
     }
   },
 };
 
-function minutesSinceWork(
-  currentMinute: number,
-  lastWorkMinute: number
-): number {
-  const difference = currentMinute - lastWorkMinute;
-  if (difference >= 0) {
-    return difference;
-  } else {
-    return 60 + difference;
-  }
+function minutesSinceWork(currentDate: Date, lastWorkDate: Date): number {
+  const difference = currentDate.getTime() - lastWorkDate.getTime();
+  return Math.round(((difference % 86400000) % 3600000) / 60000);
 }
