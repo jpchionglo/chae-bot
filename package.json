@@ -7,11 +7,16 @@
   "dependencies": {
     "discord.io": "^2.5.3",
     "discord.js": "^13.8.1",
+    "sequelize": "^6.21.0",
+    "sqlite3": "^5.0.8",
     "winston": "^3.7.2"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "start": "nodemon src/bot.ts"
   }
 }
