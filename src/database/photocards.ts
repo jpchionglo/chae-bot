@@ -9,6 +9,11 @@ export const sequelize = new Sequelize("database", "user", "password", {
 });
 
 export const Photocards = sequelize.define("photocards", {
+  cardId: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   name: {
     type: Sequelize.STRING,
     unique: true,

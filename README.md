@@ -6,3 +6,6 @@ TODO:
 
 - Edit card command
 - Delete card command
+- Remove Balance
+- Drop (Gacha)
+- Make some commands only usable depending on role
