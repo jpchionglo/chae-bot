@@ -1,10 +1,12 @@
 import {
   BaseCommandInteraction,
   Client,
+  Interaction,
   MessageActionRow,
   ModalActionRowComponent,
 } from "discord.js";
 import { Command } from "../Command";
+import { Photocards } from "../database/photocards";
 
 const { Modal, TextInputComponent } = require("discord.js");
 
@@ -12,16 +14,20 @@ export const addcard: Command = {
   name: "addcard",
   description: "Adds a photocard",
   type: "CHAT_INPUT",
+  options: [
+    {
+      type: "STRING",
+      name: "name",
+      description: "Name of card to create",
+      required: true,
+    },
+  ],
   run: async (client: Client, interaction: BaseCommandInteraction) => {
-    const modal = new Modal()
-      .setCustomId("addCardToDatabase")
-      .setTitle("Add a Photocard");
+    const name = interaction.options.get("name")?.value;
 
-    const title = new TextInputComponent()
-      .setCustomId("titleInput")
-      .setLabel("Photocard Title")
-      .setStyle("SHORT")
-      .setRequired(true);
+    const modal = new Modal()
+      .setCustomId("addPhotoCard")
+      .setTitle(`Add a Photocard (${name})`);
 
     const imageUrl = new TextInputComponent()
       .setCustomId("imageUrlInput")
@@ -47,20 +53,26 @@ export const addcard: Command = {
       .setStyle("SHORT")
       .setRequired(true);
 
-    const firstActionRow =
-      new MessageActionRow<ModalActionRowComponent>().addComponents(title);
+    const cost = new TextInputComponent()
+      .setCustomId("costInput")
+      .setLabel("Cost")
+      .setStyle("SHORT")
+      .setRequired(true);
 
-    const secondActionRow =
+    const firstActionRow =
       new MessageActionRow<ModalActionRowComponent>().addComponents(imageUrl);
 
-    const thirdActionRow =
+    const secondActionRow =
       new MessageActionRow<ModalActionRowComponent>().addComponents(rarity);
 
-    const fourthActionRow =
+    const thirdActionRow =
       new MessageActionRow<ModalActionRowComponent>().addComponents(era);
 
-    const fifthActionRow =
+    const fourthActionRow =
       new MessageActionRow<ModalActionRowComponent>().addComponents(set);
+
+    const fifthActionRow =
+      new MessageActionRow<ModalActionRowComponent>().addComponents(cost);
 
     modal.addComponents(
       firstActionRow,
@@ -71,5 +83,44 @@ export const addcard: Command = {
     );
 
     await interaction.showModal(modal);
+
+    client.once("interactionCreate", async (modalInteraction: Interaction) => {
+      if (
+        modalInteraction.isModalSubmit() &&
+        modalInteraction.customId === "addPhotoCard"
+      ) {
+        let modalImageUrl =
+          modalInteraction.fields.getTextInputValue("imageUrlInput");
+        let modalRarity =
+          modalInteraction.fields.getTextInputValue("rarityInput");
+        let modalEra = modalInteraction.fields.getTextInputValue("eraInput");
+        let modalSet = modalInteraction.fields.getTextInputValue("setInput");
+        let modalCost = modalInteraction.fields.getTextInputValue("costInput");
+        try {
+          const photocard = await Photocards.create(
+            {
+              name,
+              imageUrl: modalImageUrl,
+              rarity: modalRarity,
+              era: modalEra,
+              set: modalSet,
+              cost: modalCost,
+            },
+            { where: { name } }
+          );
+
+          return modalInteraction.reply(`Card ${photocard.name} added!`);
+        } catch (error: any) {
+          console.log(error);
+          if (error.name === "SequelizeUniqueConstraintError") {
+            return modalInteraction.reply("That photocard already exists.");
+          }
+
+          return modalInteraction.reply(
+            "Something went wrong with adding a photocard."
+          );
+        }
+      }
+    });
   },
 };

@@ -3,10 +3,8 @@ import {
   ButtonInteraction,
   Client,
   Interaction,
-  ModalSubmitInteraction,
 } from "discord.js";
-import { add } from "winston";
-import { ButtonCommands, Commands, ModalCommands } from "../Commands";
+import { ButtonCommands, Commands } from "../Commands";
 import { Users } from "../database/users";
 import { Role } from "../models/roles";
 
@@ -15,8 +13,6 @@ export default (client: Client): void => {
     if (interaction.isCommand() || interaction.isContextMenu()) {
       await handleUser(client, interaction);
       await handleSlashCommand(client, interaction);
-    } else if (interaction.isModalSubmit()) {
-      await handleModalInput(interaction);
     } else if (interaction.isButton()) {
       await handleButtonInput(interaction);
     }
@@ -37,23 +33,6 @@ const handleSlashCommand = async (
   }
 
   slashCommand.run(client, interaction);
-};
-
-const handleModalInput = async (
-  interaction: ModalSubmitInteraction
-): Promise<void> => {
-  if (interaction.customId !== "editPhotoCard") {
-    const modalCommand = ModalCommands.find(
-      (command) => command.name === interaction.customId
-    );
-
-    if (!modalCommand) {
-      interaction.reply({ content: "An error has occurred" });
-      return;
-    }
-
-    modalCommand.run(interaction);
-  }
 };
 
 const handleButtonInput = async (
