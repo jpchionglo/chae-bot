@@ -1,11 +1,12 @@
 import {
   BaseCommandInteraction,
+  ButtonInteraction,
   Client,
   Interaction,
   ModalSubmitInteraction,
 } from "discord.js";
 import { add } from "winston";
-import { Commands, ModalCommands } from "../Commands";
+import { ButtonCommands, Commands, ModalCommands } from "../Commands";
 import { Users } from "../database/users";
 import { Role } from "../models/roles";
 
@@ -16,6 +17,8 @@ export default (client: Client): void => {
       await handleSlashCommand(client, interaction);
     } else if (interaction.isModalSubmit()) {
       await handleModalInput(interaction);
+    } else if (interaction.isButton()) {
+      await handleButtonInput(interaction);
     }
   });
 };
@@ -36,7 +39,6 @@ const handleSlashCommand = async (
   slashCommand.run(client, interaction);
 };
 
-//Currently Maps Modal input to database commands
 const handleModalInput = async (
   interaction: ModalSubmitInteraction
 ): Promise<void> => {
@@ -50,6 +52,21 @@ const handleModalInput = async (
   }
 
   modalCommand.run(interaction);
+};
+
+const handleButtonInput = async (
+  interaction: ButtonInteraction
+): Promise<void> => {
+  const buttonCommand = ButtonCommands.find(
+    (command) => command.name === interaction.customId
+  );
+
+  if (!buttonCommand) {
+    interaction.reply({ content: "An error has occurred" });
+    return;
+  }
+
+  buttonCommand.run(interaction);
 };
 
 const handleUser = async (

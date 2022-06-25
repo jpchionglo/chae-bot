@@ -1,18 +1,26 @@
-import { BaseCommandInteraction, Client, MessageEmbed } from "discord.js";
+import {
+  BaseCommandInteraction,
+  Client,
+  Message,
+  MessageActionRow,
+  MessageButton,
+  MessageEmbed,
+} from "discord.js";
+import { col } from "sequelize/types";
 import { Command } from "../Command";
 import { Photocards } from "../database/photocards";
 
 const { Modal, TextInputComponent } = require("discord.js");
 
-export const viewcard: Command = {
-  name: "viewcard",
-  description: "Views a card",
+export const deletecard: Command = {
+  name: "deletecard",
+  description: "Deletes a card",
   type: "CHAT_INPUT",
   options: [
     {
       type: "STRING",
       name: "name",
-      description: "Name of card to view",
+      description: "Name of card to delete",
       required: true,
     },
   ],
@@ -23,6 +31,12 @@ export const viewcard: Command = {
     });
 
     if (photocard) {
+      const row = new MessageActionRow().addComponents(
+        new MessageButton()
+          .setCustomId("deletePhotoCard")
+          .setLabel("Delete")
+          .setStyle("DANGER")
+      );
       const embed = new MessageEmbed()
         .setColor("#0E86D4")
         .setTitle(photocard.get("name"))
@@ -40,7 +54,11 @@ export const viewcard: Command = {
         .setImage(photocard.get("imageUrl"))
         .setTimestamp();
 
-      await interaction.reply({ embeds: [embed] });
+      await interaction.reply({
+        content: "**ARE YOU SURE YOU WANT TO DELETE THIS CARD?**",
+        embeds: [embed],
+        components: [row],
+      });
     } else {
       await interaction.reply("Photocard not found.");
     }
