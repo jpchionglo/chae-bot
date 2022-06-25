@@ -11,6 +11,7 @@ import { viewcard } from "./commands/viewcard";
 import { work } from "./commands/work";
 import { addCardToDatabase } from "./commands/addPhotoCard";
 import { deletePhotoCard } from "./commands/deletePhotoCard";
+import { editcard } from "./commands/editcard";
 
 export const Commands: Command[] = [
   ping,
@@ -23,6 +24,7 @@ export const Commands: Command[] = [
   daily,
   work,
   deletecard,
+  editcard
 ];
 export const ModalCommands: ModalCommand[] = [addCardToDatabase];
 

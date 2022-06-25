@@ -1,6 +1,7 @@
 import {
   BaseCommandInteraction,
   Client,
+  Interaction,
   MessageActionRow,
   ModalActionRowComponent,
 } from "discord.js";
@@ -35,30 +36,35 @@ export const editcard: Command = {
         .setCustomId("imageUrlInput")
         .setLabel("Image URL")
         .setStyle("SHORT")
+        .setPlaceholder("Leave empty for no change")
         .setValue(photocard.get("imageUrl"));
 
       const rarity = new TextInputComponent()
         .setCustomId("rarityInput")
         .setLabel("Rarity")
         .setStyle("SHORT")
+        .setPlaceholder("Leave empty for no change")
         .setValue(String(photocard.get("rarity")));
 
       const era = new TextInputComponent()
         .setCustomId("eraInput")
         .setLabel("Era")
         .setStyle("SHORT")
+        .setPlaceholder("Leave empty for no change")
         .setValue(photocard.get("era"));
 
       const set = new TextInputComponent()
         .setCustomId("setInput")
         .setLabel("Set #")
         .setStyle("SHORT")
+        .setPlaceholder("Leave empty for no change")
         .setValue(String(photocard.get("set")));
 
       const cost = new TextInputComponent()
         .setCustomId("costInput")
         .setLabel("Cost")
         .setStyle("SHORT")
+        .setPlaceholder("Leave empty for no change")
         .setValue(String(photocard.get("cost")));
 
       const firstActionRow =
@@ -85,6 +91,56 @@ export const editcard: Command = {
       );
 
       await interaction.showModal(modal);
+
+      client.once(
+        "interactionCreate",
+        async (modalInteraction: Interaction) => {
+          if (
+            modalInteraction.isModalSubmit() &&
+            modalInteraction.customId === "editPhotoCard"
+          ) {
+            let modalImageUrl =
+              modalInteraction.fields.getTextInputValue("imageUrlInput");
+            let modalRarity =
+              modalInteraction.fields.getTextInputValue("rarityInput");
+            let modalEra =
+              modalInteraction.fields.getTextInputValue("eraInput");
+            let modalSet =
+              modalInteraction.fields.getTextInputValue("setInput");
+            let modalCost =
+              modalInteraction.fields.getTextInputValue("costInput");
+
+            modalImageUrl =
+              modalImageUrl === "" ? photocard.get("imageUrl") : modalImageUrl;
+            modalRarity =
+              modalRarity === "" ? photocard.get("rarity") : modalRarity;
+            modalEra = modalEra === "" ? photocard.get("era") : modalEra;
+            modalSet = modalSet === "" ? photocard.get("set") : modalSet;
+            modalCost = modalCost === "" ? photocard.get("cost") : modalCost;
+
+            const affectedRows = await Photocards.update(
+              {
+                imageUrl: modalImageUrl,
+                rarity: modalRarity,
+                era: modalEra,
+                set: modalSet,
+                cost: modalCost,
+              },
+              { where: { name: photocard.get("name") } }
+            );
+
+            if (affectedRows > 0) {
+              await modalInteraction.reply(
+                `Photocard "${photocard.get("name")}" updated.`
+              );
+            } else {
+              await modalInteraction.reply(
+                `Could not find card name "${photocard.get("name")}".`
+              );
+            }
+          }
+        }
+      );
     } else {
       await interaction.reply(
         `Photocard ${interaction.options.get("name")?.value} not found.`

@@ -42,16 +42,18 @@ const handleSlashCommand = async (
 const handleModalInput = async (
   interaction: ModalSubmitInteraction
 ): Promise<void> => {
-  const modalCommand = ModalCommands.find(
-    (command) => command.name === interaction.customId
-  );
+  if (interaction.customId !== "editPhotoCard") {
+    const modalCommand = ModalCommands.find(
+      (command) => command.name === interaction.customId
+    );
 
-  if (!modalCommand) {
-    interaction.reply({ content: "An error has occurred" });
-    return;
+    if (!modalCommand) {
+      interaction.reply({ content: "An error has occurred" });
+      return;
+    }
+
+    modalCommand.run(interaction);
   }
-
-  modalCommand.run(interaction);
 };
 
 const handleButtonInput = async (

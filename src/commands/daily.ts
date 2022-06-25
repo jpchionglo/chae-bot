@@ -11,8 +11,7 @@ export const daily: Command = {
     const daily = await Work.findOne({
       where: { userid: interaction.user.id },
     });
-    let currentDay = new Date(interaction.createdAt).getUTCDate();
-
+    let currentDay = new Date(interaction.createdAt).getDate();
     try {
       if (daily && daily.get("lastDaily") == currentDay) {
         await interaction.reply("You've already done the daily for today.");
