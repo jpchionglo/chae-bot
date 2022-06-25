@@ -2,8 +2,6 @@ import { BaseCommandInteraction, Client } from "discord.js";
 import { Command } from "../Command";
 import { Users } from "../database/users";
 
-const { Modal, TextInputComponent } = require("discord.js");
-
 export const balance: Command = {
   name: "balance",
   description: "Checks your balance",

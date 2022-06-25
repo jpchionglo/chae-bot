@@ -2,8 +2,6 @@ import { BaseCommandInteraction, Client, MessageEmbed } from "discord.js";
 import { Command } from "../Command";
 import { Photocards } from "../database/photocards";
 
-const { Modal, TextInputComponent } = require("discord.js");
-
 export const viewcard: Command = {
   name: "viewcard",
   description: "Views a card",

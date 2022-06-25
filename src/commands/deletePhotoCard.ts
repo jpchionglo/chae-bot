@@ -1,11 +1,7 @@
 import {
-  BaseCommandInteraction,
   ButtonInteraction,
-  CacheType,
-  MessageInteraction,
-  ModalSubmitInteraction,
 } from "discord.js";
-import { ButtonCommand, ModalCommand } from "../Command";
+import { ButtonCommand } from "../Command";
 import { Photocards } from "../database/photocards";
 
 export const deletePhotoCard: ButtonCommand = {

@@ -1,16 +1,12 @@
 import {
   BaseCommandInteraction,
   Client,
-  Message,
   MessageActionRow,
   MessageButton,
   MessageEmbed,
 } from "discord.js";
-import { col } from "sequelize/types";
 import { Command } from "../Command";
 import { Photocards } from "../database/photocards";
-
-const { Modal, TextInputComponent } = require("discord.js");
 
 export const deletecard: Command = {
   name: "deletecard",

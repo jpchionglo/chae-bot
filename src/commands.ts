@@ -12,6 +12,7 @@ import { work } from "./commands/work";
 import { addCardToDatabase } from "./commands/addPhotoCard";
 import { deletePhotoCard } from "./commands/deletePhotoCard";
 import { editcard } from "./commands/editcard";
+import { removebalance } from "./commands/removebalance";
 
 export const Commands: Command[] = [
   ping,
@@ -24,7 +25,8 @@ export const Commands: Command[] = [
   daily,
   work,
   deletecard,
-  editcard
+  editcard,
+  removebalance
 ];
 export const ModalCommands: ModalCommand[] = [addCardToDatabase];
 
