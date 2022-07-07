@@ -11,6 +11,7 @@ import {
 } from "discord.js";
 import { Command } from "../Command";
 import { Photocards } from "../database/photocards";
+import interactionCreate from "../listeners/interactionCreate";
 import { DatabaseModel, Photocard } from "../models/photoCardModel";
 
 const { discord } = require("discord.js");
@@ -33,9 +34,6 @@ export const listall: Command = {
     let currentPageIndex = 0;
     let maxItemsPerPage = 6;
     let maxPages = Math.ceil(photocards.length / maxItemsPerPage);
-
-    let nextListener: Client<boolean>;
-    let previousListener: Client<boolean>;
 
     let done = false;
 
@@ -99,9 +97,39 @@ export const listall: Command = {
 
     await updatePage();
 
+    let message = await interaction.fetchReply();
+
+    let nextListener = async (buttonInteraction: Interaction) => {
+      if (
+        buttonInteraction.isButton() &&
+        buttonInteraction.customId === "next" &&
+        buttonInteraction.message.id === message.id
+      ) {
+        currentPageIndex++;
+        await updatePage();
+        await buttonInteraction.deferUpdate();
+        resetTimer();
+      }
+    };
+
+    let previousListener = async (buttonInteraction: Interaction) => {
+      if (
+        buttonInteraction.isButton() &&
+        buttonInteraction.customId === "previous" &&
+        buttonInteraction.message.id === message.id
+      ) {
+        currentPageIndex--;
+        await updatePage();
+        await buttonInteraction.deferUpdate();
+        resetTimer();
+      }
+    };
+
     let timer = setTimeout(() => {
       done = true;
       updatePage();
+      client.removeListener("interactionCreate", nextListener);
+      client.removeListener("interactionCreate", previousListener);
     }, 10000);
 
     function resetTimer() {
@@ -109,37 +137,12 @@ export const listall: Command = {
       timer = setTimeout(() => {
         done = true;
         updatePage();
+        client.removeListener("interactionCreate", nextListener);
+        client.removeListener("interactionCreate", previousListener);
       }, 10000);
     }
 
-    nextListener = client.on(
-      "interactionCreate",
-      async (buttonInteraction: Interaction) => {
-        if (
-          buttonInteraction.isButton() &&
-          buttonInteraction.customId === "next"
-        ) {
-          currentPageIndex++;
-          await updatePage();
-          await buttonInteraction.deferUpdate();
-          resetTimer();
-        }
-      }
-    );
-
-    previousListener = client.on(
-      "interactionCreate",
-      async (buttonInteraction: Interaction) => {
-        if (
-          buttonInteraction.isButton() &&
-          buttonInteraction.customId === "previous"
-        ) {
-          currentPageIndex--;
-          await updatePage();
-          await buttonInteraction.deferUpdate();
-          resetTimer();
-        }
-      }
-    );
+    client.on("interactionCreate", nextListener);
+    client.on("interactionCreate", previousListener);
   },
 };
