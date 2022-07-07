@@ -1,4 +1,4 @@
-import { ButtonCommand, Command, ModalCommand } from "./Command";
+import { Command } from "./Command";
 import { addbalance } from "./commands/addbalance";
 import { addcard } from "./commands/addcard";
 import { balance } from "./commands/balance";
@@ -8,9 +8,9 @@ import { michaeng } from "./commands/michaeng";
 import { ping } from "./commands/ping";
 import { viewcard } from "./commands/viewcard";
 import { work } from "./commands/work";
-import { deletePhotoCard } from "./commands/deletePhotoCard";
 import { editcard } from "./commands/editcard";
 import { removebalance } from "./commands/removebalance";
+import { listall } from "./commands/listall";
 
 export const Commands: Command[] = [
   ping,
@@ -23,7 +23,6 @@ export const Commands: Command[] = [
   work,
   deletecard,
   editcard,
-  removebalance
+  removebalance,
+  listall
 ];
-
-export const ButtonCommands: ButtonCommand[] = [deletePhotoCard];

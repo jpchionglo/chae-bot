@@ -1,10 +1,5 @@
-import {
-  BaseCommandInteraction,
-  ButtonInteraction,
-  Client,
-  Interaction,
-} from "discord.js";
-import { ButtonCommands, Commands } from "../Commands";
+import { BaseCommandInteraction, Client, Interaction } from "discord.js";
+import { Commands } from "../Commands";
 import { Users } from "../database/users";
 import { Role } from "../models/roles";
 
@@ -13,8 +8,6 @@ export default (client: Client): void => {
     if (interaction.isCommand() || interaction.isContextMenu()) {
       await handleUser(client, interaction);
       await handleSlashCommand(client, interaction);
-    } else if (interaction.isButton()) {
-      await handleButtonInput(interaction);
     }
   });
 };
@@ -33,21 +26,6 @@ const handleSlashCommand = async (
   }
 
   slashCommand.run(client, interaction);
-};
-
-const handleButtonInput = async (
-  interaction: ButtonInteraction
-): Promise<void> => {
-  const buttonCommand = ButtonCommands.find(
-    (command) => command.name === interaction.customId
-  );
-
-  if (!buttonCommand) {
-    interaction.reply({ content: "An error has occurred" });
-    return;
-  }
-
-  buttonCommand.run(interaction);
 };
 
 const handleUser = async (

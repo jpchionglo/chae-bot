@@ -1,6 +1,7 @@
 import {
   BaseCommandInteraction,
   Client,
+  Interaction,
   MessageActionRow,
   MessageButton,
   MessageEmbed,
@@ -55,6 +56,34 @@ export const deletecard: Command = {
         embeds: [embed],
         components: [row],
       });
+
+      client.once(
+        "interactionCreate",
+        async (buttonInteraction: Interaction) => {
+          if (
+            buttonInteraction.isButton() &&
+            buttonInteraction.customId === "deletePhotoCard"
+          ) {
+            const rowCount = await Photocards.destroy({
+              where: { name: photocardName },
+            });
+
+            if (!rowCount) {
+              await buttonInteraction.update({
+                content: "That photocard doesn't exist.",
+                embeds: [],
+                components: [],
+              });
+            } else {
+              await buttonInteraction.update({
+                content: `Photocard ${photocardName} deleted.`,
+                embeds: [],
+                components: [],
+              });
+            }
+          }
+        }
+      );
     } else {
       await interaction.reply("Photocard not found.");
     }
