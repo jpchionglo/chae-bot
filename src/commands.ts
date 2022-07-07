@@ -11,6 +11,7 @@ import { work } from "./commands/work";
 import { editcard } from "./commands/editcard";
 import { removebalance } from "./commands/removebalance";
 import { listall } from "./commands/listall";
+import { drop } from "./commands/drop";
 
 export const Commands: Command[] = [
   ping,
@@ -24,5 +25,6 @@ export const Commands: Command[] = [
   deletecard,
   editcard,
   removebalance,
-  listall
+  listall,
+  drop,
 ];
