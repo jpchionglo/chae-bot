@@ -1,4 +1,4 @@
 # chae-bot
-finally i found amongus
+Discord bot side project kpop gacha game
 
 npm install discord.io winston -save
