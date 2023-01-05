@@ -1,2 +1,2 @@
 # chae-bot
-finally i found amongus
+dotnet version of kpop discord bot
